@@ -3,8 +3,8 @@ from utils import *
 from datetime import datetime
 import copy
 
-def report_results(data):
 
+def report_results(data):
     begin = datetime.now()
 
     print("Attempting to enforce demographic parity...")
@@ -17,7 +17,6 @@ def report_results(data):
             num_positive_predictions = get_num_predicted_positives(demographic_parity_data[group])
             prob = num_positive_predictions / len(demographic_parity_data[group])
             print("Probability of positive prediction for " + str(group) + ": " + str(prob))
-
 
         print("")
         for group in demographic_parity_data.keys():
@@ -98,7 +97,6 @@ def report_results(data):
         print("Total accuracy: " + str(total_accuracy))
         print("-----------------------------------------------------------------")
         print("")
-
 
     print("Attempting to enforce maximum profit...")
     max_profit_data, max_profit_thresholds = enforce_maximum_profit(copy.deepcopy(data))
@@ -233,7 +231,5 @@ def report_results(data):
 
         end = datetime.now()
 
-        seconds = end-begin
+        seconds = end - begin
         print("Postprocessing took approximately: " + str(seconds) + " seconds")
-
-
