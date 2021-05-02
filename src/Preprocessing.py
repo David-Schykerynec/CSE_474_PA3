@@ -2,8 +2,8 @@ import numpy as np
 import csv
 import random
 
-def preprocess(metrics, recalculate=False, causal=False):
 
+def preprocess(metrics, recalculate=False, causal=False):
     categories, data = clean_data()
     if recalculate:
         training_data, training_labels, test_data, test_labels = split_data(data, categories, 0.2, causal=causal)
@@ -43,11 +43,12 @@ def preprocess(metrics, recalculate=False, causal=False):
 
     return training_data, training_labels, test_data, test_labels, reduced_categories, mappings
 
+
 #######################################################################################################################
 
 def metric_vs_recid(metric):
     with open("compas-scores-two-years.csv", "r+") as compas_data:
-        #print("Opened data file")
+        # print("Opened data file")
         reader = csv.reader(compas_data)
         totals = {}
         possible_values = {}
@@ -79,8 +80,9 @@ def metric_vs_recid(metric):
                 break
 
         for value in possible_values:
-            print(str(value) + ": " + str(int(possible_values[value])*100/int(totals[value])))
+            print(str(value) + ": " + str(int(possible_values[value]) * 100 / int(totals[value])))
         print("")
+
 
 #######################################################################################################################
 
@@ -91,7 +93,7 @@ def clean_data():
     # Throws out any rows with a -1 for recidivism
     with open("compas-scores-two-years.csv", "r+") as compas_data:
         is_recid = 52
-        #print("Opened data file")
+        # print("Opened data file")
         reader = csv.reader(compas_data)
         categories = reader.__next__()
         row = reader.__next__()
@@ -117,10 +119,10 @@ def clean_data():
 
     return categories, data
 
+
 #######################################################################################################################
 
 def split_data(data, categories, percent_test, causal=False):
-
     if causal:
         data = enforce_causal_discrimination(data, categories, "race", "Caucasian")
 
@@ -158,10 +160,10 @@ def split_data(data, categories, percent_test, causal=False):
     np.save("COMPAS_test_labels", test_labels)
     return training_data, training_labels, test_data, test_labels
 
+
 #######################################################################################################################
 
 def vectorize_data(data, categories, metrics, mappings):
-
     for metric in metrics:
         index = -1
         for i in range(len(categories)):
@@ -172,11 +174,13 @@ def vectorize_data(data, categories, metrics, mappings):
         for i in range(len(data)):
             data[i][index] = mappings[metric][data[i][index]]
 
+
 #######################################################################################################################
 
 def vectorize_labels(labels):
     for i in range(len(labels)):
         labels[i] = int(labels[i])
+
 
 #######################################################################################################################
 
@@ -205,12 +209,12 @@ def reduce_data(categories, data, keep_metrics):
 
     return reduced_data, reduced_categories, predictions
 
+
 #######################################################################################################################
 
 def determine_mappings(data, keep_metrics):
-
     with open("compas-scores-two-years.csv", "r+") as compas_data:
-        #print("Opened data file")
+        # print("Opened data file")
         mappings = {}
         reader = csv.reader(compas_data)
         index = -1
@@ -235,6 +239,7 @@ def determine_mappings(data, keep_metrics):
 
     return mappings
 
+
 #######################################################################################################################
 
 def enforce_causal_discrimination(data, categories, reference_metric, reference_value):
@@ -249,6 +254,3 @@ def enforce_causal_discrimination(data, categories, reference_metric, reference_
             augmented_data.append(duplicate)
 
     return augmented_data
-
-
-
