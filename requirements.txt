@@ -1,8 +1,0 @@
-h5py==3.2.1
-Keras==2.4.3
-numpy~=1.19.5
-PyYAML==5.4.1
-scipy==1.6.3
-
-matplotlib~=3.4.1
-tensorflow~=2.5.0rc1
