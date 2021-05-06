@@ -102,6 +102,10 @@ def get_num_correct(prediction_label_pairs):
 
     return num_correct
 
+
+def get_accuracy(prediction_label_pairs):
+    return get_num_correct(prediction_label_pairs)/len(prediction_label_pairs)
+
 #######################################################################################################################
 """Determines the number of false positives in a group
 
