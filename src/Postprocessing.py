@@ -1,5 +1,6 @@
-import utils
+from utils import *
 from numpy import zeros
+from operator import itemgetter
 
 #######################################################################################################################
 # YOU MUST FILL OUT YOUR SECONDARY OPTIMIZATION METRIC (either accuracy or cost)!
@@ -43,31 +44,26 @@ def enforce_equal_opportunity(categorical_results, epsilon):
 """
 
 def enforce_maximum_profit(categorical_results):
+    maximum_profit_data = dict()
     thresholds = dict()
 
-    for e in list(categorical_results.items()):
-        thresholds[e[0]] = max_profit(e[1])
+    accuracy_dict = dict()
+    threshold = 0.00
+    while threshold <= 1.00:
+        for race, pairs in categorical_results.items():
+            threshed = apply_threshold(pairs, threshold)
+            maximum_profit_data[race] = threshed
+            if race not in accuracy_dict:
+                accuracy_dict[race] = [(threshold, get_accuracy(threshed))]
+            else:
+                accuracy_dict[race].append((threshold, get_accuracy(threshed)))
+        threshold += 0.01
 
-    print()
-    print('%16s %10s' % ('RACE', 'THRESHOLD'))
-    for key in thresholds:
-        print('%16s: %.2f' % (key, thresholds[key]))
-    print()
+    for race, pairs in accuracy_dict.items():
+        max_pair = max(pairs, key=lambda x:x[1])
+        thresholds[race] = round(max_pair[0], 2)
 
-    return None, None
-
-
-# determines the threshold that maximizes accuracy for a single category
-def max_profit(results):
-    thresh = 0.00
-    accuracies = zeros(101)
-
-    for i in range(0, 101):
-        accuracies[i] = utils.get_accuracy(utils.apply_threshold(results, thresh))
-        thresh += 0.01
-
-    return accuracies.argmax()/100
-
+    return maximum_profit_data, thresholds
 
 #######################################################################################################################
 """ Determine thresholds such that all groups have the same PPV, and return the best solution
@@ -75,13 +71,37 @@ def max_profit(results):
 """
 
 def enforce_predictive_parity(categorical_results, epsilon):
-    predictive_parity_data = {}
-    thresholds = {}
+    maximum_profit_data = dict()
+    thresholds = dict()
+
+    threshold = 0.00
+    race_dict = dict()
+    accuracy_dict = dict()
+    for key, pairs in categorical_results.items():
+        threshed = apply_threshold(pairs, threshold)
+        ppv = get_positive_predictive_value(threshed)
+
+        if ppv not in race_dict:
+            race_dict[ppv] = [(key, threshold)]
+        else:
+            race_dict[ppv].append((key, threshold))
+        accuracy_dict[key] = threshed
 
     # Must complete this function!
     # return predictive_parity_data, thresholds
 
     return None, None
+
+
+def predictive_parity(results):
+    thresh = 0.00
+    thresh_ppv = []
+
+    for i in range(0, 101):
+        thresh_ppv.append((i/100, utils.get_true_positive_rate(utils.apply_threshold(results, thresh))))
+        thresh += 0.01
+
+    return thresh_ppv
 
     ###################################################################################################################
 """ Apply a single threshold to all groups, and return the best solution according to 
