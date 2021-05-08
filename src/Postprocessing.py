@@ -122,7 +122,6 @@ def enforce_maximum_profit(categorical_results):
     while threshold <= 1.00:
         for race, pairs in categorical_results.items():
             threshed = apply_threshold(pairs, threshold)
-            maximum_profit_data[race] = threshed
             if race not in accuracy_dict:
                 accuracy_dict[race] = [(threshold, get_accuracy(threshed))]
             else:
@@ -131,7 +130,8 @@ def enforce_maximum_profit(categorical_results):
 
     for race, pairs in accuracy_dict.items():
         max_pair = max(pairs, key=lambda x:x[1])
-        thresholds[race] = round(max_pair[0], 2)
+        thresholds[race] = max_pair[0]
+        maximum_profit_data[race] = apply_threshold(categorical_results[race], max_pair[0])
 
     return maximum_profit_data, thresholds
 
