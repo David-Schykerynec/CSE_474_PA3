@@ -342,7 +342,7 @@ def get_ROC_data(prediction_label_pairs, group):
     for i in range(1, 101):
         threshold = float(i) / 100.0
         eval_copy = list.copy(prediction_label_pairs)
-        apply_threshold(eval_copy, threshold)
+        eval_copy = apply_threshold(eval_copy, threshold)
         TPR = get_true_positive_rate(eval_copy)
         FPR = get_false_positive_rate(eval_copy)
         true_positives.append(TPR)
