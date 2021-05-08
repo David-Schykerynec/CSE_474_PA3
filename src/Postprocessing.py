@@ -182,20 +182,26 @@ def enforce_equal_opportunity(categorical_results, epsilon):
 
 
 def enforce_maximum_profit(categorical_results):
-    threshold = 0
+    maximum_profit_data = dict()
+    thresholds = dict()
 
-    race_dict = {}
-    while threshold <= 1:
-        accuracy_dict = {}
-        for key, pairs in categorical_results.items():
+    accuracy_dict = dict()
+    threshold = 0.00
+    while threshold <= 1.00:
+        for race, pairs in categorical_results.items():
             threshed = apply_threshold(pairs, threshold)
-            acc = get_num_correct(threshed) / len(threshed)
-            if tpr not in race_dict:
-                race_dict[tpr] = [(key, threshold, acc, tpr)]
+            if race not in accuracy_dict:
+                accuracy_dict[race] = [(threshold, get_accuracy(threshed))]
             else:
-                race_dict[tpr].append((key, threshold, acc, tpr))
-            # race_dict.setdefault(ppv,[]).append((key, threshold))
-            accuracy_dict[key] = threshed
+                accuracy_dict[race].append((threshold, get_accuracy(threshed)))
+        threshold += 0.01
+
+    for race, pairs in accuracy_dict.items():
+        max_pair = max(pairs, key=lambda x:x[1])
+        thresholds[race] = max_pair[0]
+        maximum_profit_data[race] = apply_threshold(categorical_results[race], max_pair[0])
+
+    return maximum_profit_data, thresholds
 
 
 #######################################################################################################################
